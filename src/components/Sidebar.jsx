@@ -7,7 +7,9 @@ const Sidebar = (props) => {
         }`}
         onClick={() => props.setCurrentNoteId(note.id)}
       >
-        <h4 className='text-snippet'>Note {index + 1}</h4>
+        <h4 className='text-snippet'>
+          {note.body.split('\n')[0].replace('#', '')}
+        </h4>
       </div>
     </div>
   ));
