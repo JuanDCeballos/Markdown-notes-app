@@ -1,5 +1,5 @@
 const Sidebar = (props) => {
-  const noteElements = props.notes.map((note, index) => (
+  const noteElements = props.notes.map((note) => (
     <div key={note.id}>
       <div
         className={`title ${
