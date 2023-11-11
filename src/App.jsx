@@ -28,13 +28,18 @@ const App = () => {
   };
 
   const updateNote = (text) => {
-    setNotes((oldNotes) =>
+    setNotes((oldNotes) => {
+      const newArr = [];
       oldNotes.map((oldNote) => {
-        return oldNote.id === currentNoteId
-          ? { ...oldNote, body: text }
-          : oldNote;
-      })
-    );
+        if (oldNote.id === currentNoteId) {
+          let sizas = { ...oldNote, body: text };
+          newArr.unshift(sizas);
+        } else {
+          newArr.push(oldNote);
+        }
+      });
+      return newArr;
+    });
   };
 
   const findCurrentNote = () => {
