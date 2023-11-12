@@ -3,8 +3,8 @@ import Editor from './components/Editor';
 import Split from 'react-split';
 import './App.css';
 import { useEffect, useState } from 'react';
-import { onSnapshot, addDoc } from 'firebase/firestore';
-import { notesCollection } from './firebase';
+import { onSnapshot, addDoc, doc, deleteDoc } from 'firebase/firestore';
+import { notesCollection, db, COLLECTION_NAME } from './firebase';
 
 const App = () => {
   const [notes, setNotes] = useState([]);
@@ -49,10 +49,9 @@ const App = () => {
     });
   };
 
-  const deleteNote = (e, noteId) => {
-    e.stopPropagation();
-
-    setNotes((oldNotes) => oldNotes.filter((note) => note.id !== noteId));
+  const deleteNote = async (noteId) => {
+    const docRef = doc(db, COLLECTION_NAME, noteId);
+    await deleteDoc(docRef);
   };
 
   return (
