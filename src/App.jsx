@@ -34,8 +34,8 @@ const App = () => {
       const newArr = [];
       oldNotes.map((oldNote) => {
         if (oldNote.id === currentNoteId) {
-          let sizas = { ...oldNote, body: text };
-          newArr.unshift(sizas);
+          let noteToUpdate = { ...oldNote, body: text };
+          newArr.unshift(noteToUpdate);
         } else {
           newArr.push(oldNote);
         }
