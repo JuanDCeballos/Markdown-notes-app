@@ -8,9 +8,7 @@ import { notesCollection, db, COLLECTION_NAME } from './firebase';
 
 const App = () => {
   const [notes, setNotes] = useState([]);
-  const [currentNoteId, setCurrentNoteId] = useState(
-    (notes[0] && notes[0].id) || ''
-  );
+  const [currentNoteId, setCurrentNoteId] = useState('');
 
   const currentNote =
     notes.find((note) => note.id === currentNoteId) || notes[0];
@@ -26,9 +24,17 @@ const App = () => {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    if (!currentNoteId) {
+      setCurrentNoteId(notes[0]?.id);
+    }
+  }, [notes]);
+
   const createNewNote = async () => {
     const newNote = {
       body: "# Type your markdown note's title here",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
     };
     const newNoteRef = await addDoc(notesCollection, newNote);
     setCurrentNoteId(newNoteRef.id);
@@ -36,7 +42,11 @@ const App = () => {
 
   const updateNote = async (text) => {
     const docRef = doc(db, COLLECTION_NAME, currentNoteId);
-    await setDoc(docRef, { body: text }, { merge: true });
+    await setDoc(
+      docRef,
+      { body: text, updatedAt: Date.now() },
+      { merge: true }
+    );
   };
 
   const deleteNote = async (noteId) => {
@@ -55,9 +65,7 @@ const App = () => {
             newNote={createNewNote}
             deleteNote={deleteNote}
           />
-          {currentNoteId && notes.length > 0 && (
-            <Editor currentNote={currentNote} updateNote={updateNote} />
-          )}
+          <Editor currentNote={currentNote} updateNote={updateNote} />
         </Split>
       ) : (
         <div className='no-notes'>
