@@ -3,7 +3,7 @@ import Editor from './components/Editor';
 import Split from 'react-split';
 import './App.css';
 import { useEffect, useState } from 'react';
-import { onSnapshot, addDoc, doc, deleteDoc } from 'firebase/firestore';
+import { onSnapshot, addDoc, doc, deleteDoc, setDoc } from 'firebase/firestore';
 import { notesCollection, db, COLLECTION_NAME } from './firebase';
 
 const App = () => {
@@ -34,19 +34,9 @@ const App = () => {
     setCurrentNoteId(newNoteRef.id);
   };
 
-  const updateNote = (text) => {
-    setNotes((oldNotes) => {
-      const newArr = [];
-      oldNotes.map((oldNote) => {
-        if (oldNote.id === currentNoteId) {
-          let noteToUpdate = { ...oldNote, body: text };
-          newArr.unshift(noteToUpdate);
-        } else {
-          newArr.push(oldNote);
-        }
-      });
-      return newArr;
-    });
+  const updateNote = async (text) => {
+    const docRef = doc(db, COLLECTION_NAME, currentNoteId);
+    await setDoc(docRef, { body: text }, { merge: true });
   };
 
   const deleteNote = async (noteId) => {
