@@ -3,7 +3,15 @@ import Editor from './components/Editor';
 import Split from 'react-split';
 import './App.css';
 import { useEffect, useState } from 'react';
-import { onSnapshot, addDoc, doc, deleteDoc, setDoc } from 'firebase/firestore';
+import {
+  onSnapshot,
+  addDoc,
+  doc,
+  deleteDoc,
+  setDoc,
+  orderBy,
+  query,
+} from 'firebase/firestore';
 import { notesCollection, db, COLLECTION_NAME } from './firebase';
 
 const App = () => {
@@ -14,13 +22,16 @@ const App = () => {
     notes.find((note) => note.id === currentNoteId) || notes[0];
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(notesCollection, (snapshot) => {
-      const notesArr = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setNotes(notesArr);
-    });
+    const unsubscribe = onSnapshot(
+      query(notesCollection, orderBy('updatedAt', 'desc')),
+      (snapshot) => {
+        const notesArr = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setNotes(notesArr);
+      }
+    );
     return unsubscribe;
   }, []);
 
