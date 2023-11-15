@@ -17,6 +17,7 @@ import { notesCollection, db, COLLECTION_NAME } from './firebase';
 const App = () => {
   const [notes, setNotes] = useState([]);
   const [currentNoteId, setCurrentNoteId] = useState('');
+  const [tempNoteText, setTempNoteText] = useState('');
 
   const currentNote =
     notes.find((note) => note.id === currentNoteId) || notes[0];
@@ -40,6 +41,21 @@ const App = () => {
       setCurrentNoteId(notes[0]?.id);
     }
   }, [notes]);
+
+  useEffect(() => {
+    if (currentNote) {
+      setTempNoteText(currentNote.body);
+    }
+  }, [currentNote]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (tempNoteText !== currentNote.body) {
+        updateNote(tempNoteText);
+      }
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [tempNoteText]);
 
   const createNewNote = async () => {
     const newNote = {
@@ -76,7 +92,10 @@ const App = () => {
             newNote={createNewNote}
             deleteNote={deleteNote}
           />
-          <Editor currentNote={currentNote} updateNote={updateNote} />
+          <Editor
+            tempNoteText={tempNoteText}
+            setTempNoteText={setTempNoteText}
+          />
         </Split>
       ) : (
         <div className='no-notes'>
